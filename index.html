@@ -341,21 +341,11 @@
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.7);
         }
-        
-        .music-status {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
-            background: rgba(0, 0, 0, 0.2);
-            padding: 5px 10px;
-            border-radius: 10px;
-            display: inline-block;
-        }
     </style>
 </head>
 <body>
     <div class="music-control" id="musicControl">
-        <i>♪</i>
+        <i>♫</i>
     </div>
 
     <div class="container">
@@ -397,16 +387,7 @@
             <button class="button" id="wishButton">许个愿吧！</button>
             <button class="button" id="moreBalloons">更多气球</button>
             <button class="button" id="confettiBtn">撒纸屑</button>
-            <button class="button" id="playMusicBtn">播放音乐</button>
-            
-            <div class="wish-counter">
-               
-            </div>
-            
-            <div class="music-status" id="musicStatus">
-                点击"播放音乐"按钮开始播放
-            </div>
-        </div>
+           
         
         <div class="wishes" id="wishes">
             愿你的每一天都充满阳光和欢笑！
@@ -414,13 +395,11 @@
     </div>
 
     <!-- 使用GitHub仓库中的本地MP3文件 -->
-    <audio id="birthdaySong" loop>
-        <!-- 尝试多种可能的MP3文件路径 -->
-        <source src="happy-birthday.mp3" type="audio/mpeg">
-        <source src="birthday-music.mp3" type="audio/mpeg">
-        <source src="audio/happy-birthday.mp3" type="audio/mpeg">
-        <source src="music/birthday-song.mp3" type="audio/mpeg">
-        <source src="sounds/happy-birthday.mp3" type="audio/mpeg">
+    <audio id="happy-birthday.mp3" loop>
+        <source src="happy-birthday.mp3" type="mp3">
+        <!-- 如果上述文件不存在，可以尝试其他文件名 -->
+        <!-- <source src="birthday-music.mp3" type="audio/mpeg"> -->
+        <!-- <source src="audio/happy-birthday.mp3" type="audio/mpeg"> -->
         您的浏览器不支持 audio 元素。
     </audio>
 
@@ -507,54 +486,33 @@
         // 音乐控制
         const musicControl = document.getElementById('musicControl');
         const birthdaySong = document.getElementById('birthdaySong');
-        const musicStatus = document.getElementById('musicStatus');
-        const playMusicBtn = document.getElementById('playMusicBtn');
-        let isPlaying = false;
+        let isPlaying = true; // 初始设为播放状态
 
-        // 更新音乐状态显示
-        function updateMusicStatus() {
-            if (isPlaying) {
-                musicStatus.textContent = "音乐播放中 ♫";
-                musicStatus.style.color = "#4caf50";
-            } else {
-                musicStatus.textContent = "音乐已暂停 ♪";
-                musicStatus.style.color = "#ff4081";
+        // 自动播放音乐
+        function autoPlayMusic() {
+            const playPromise = birthdaySong.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    // 播放成功
+                    musicControl.innerHTML = '<i>♫</i>';
+                    isPlaying = true;
+                }).catch(error => {
+                    // 播放失败，静默处理
+                    console.error('音乐自动播放失败:', error);
+                });
             }
         }
 
-        // 播放音乐函数
-        function playMusic() {
-            birthdaySong.play().then(() => {
-                isPlaying = true;
-                musicControl.innerHTML = '<i>♫</i>';
-                updateMusicStatus();
-            }).catch(error => {
-                console.error("音乐播放失败:", error);
-                musicStatus.textContent = "音乐加载失败，请检查文件路径";
-                musicStatus.style.color = "#ff5722";
-            });
-        }
-
-        // 暂停音乐函数
-        function pauseMusic() {
-            birthdaySong.pause();
-            isPlaying = false;
-            musicControl.innerHTML = '<i>♪</i>';
-            updateMusicStatus();
-        }
-
-        // 音乐控制按钮点击事件
         musicControl.addEventListener('click', function() {
             if (isPlaying) {
-                pauseMusic();
+                birthdaySong.pause();
+                musicControl.innerHTML = '<i>♪</i>';
+                isPlaying = false;
             } else {
-                playMusic();
+                birthdaySong.play();
+                musicControl.innerHTML = '<i>♫</i>';
+                isPlaying = true;
             }
-        });
-
-        // 播放音乐按钮点击事件
-        playMusicBtn.addEventListener('click', function() {
-            playMusic();
         });
 
         // 许愿按钮
@@ -639,8 +597,9 @@
         // 初始化
         window.onload = function() {
             createBalloons(8);
-            updateMusicStatus();
-          
+            
+            // 尝试自动播放音乐
+            autoPlayMusic();
         };
     </script>
 </body>

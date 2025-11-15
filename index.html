@@ -341,15 +341,6 @@
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.7);
         }
-        
-        .welcome-message {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            backdrop-filter: blur(5px);
-            font-size: 1rem;
-        }
     </style>
 </head>
 <body>
@@ -396,20 +387,19 @@
             <button class="button" id="wishButton">许个愿吧！</button>
             <button class="button" id="moreBalloons">更多气球</button>
             <button class="button" id="confettiBtn">撒纸屑</button>
-         
-            <div class="wishes" id="wishes">
-                愿你的每一天都充满阳光和欢笑！
-            </div>
-            
-            <div class="welcome-message">
-              
-            </div>
+           
+        
+        <div class="wishes" id="wishes">
+            愿你的每一天都充满阳光和欢笑！
         </div>
     </div>
 
     <!-- 使用GitHub仓库中的本地MP3文件 -->
     <audio id="birthdaySong" loop>
         <source src="happy-birthday.mp3" type="audio/mpeg">
+        <!-- 如果上述文件不存在，可以尝试其他文件名 -->
+        <!-- <source src="birthday-music.mp3" type="audio/mpeg"> -->
+        <!-- <source src="audio/happy-birthday.mp3" type="audio/mpeg"> -->
         您的浏览器不支持 audio 元素。
     </audio>
 
@@ -496,32 +486,19 @@
         // 音乐控制
         const musicControl = document.getElementById('musicControl');
         const birthdaySong = document.getElementById('birthdaySong');
-        let isPlaying = false;
+        let isPlaying = true; // 初始设为播放状态
 
         // 自动播放音乐
         function autoPlayMusic() {
-            birthdaySong.muted = false; // 确保不是静音状态
             const playPromise = birthdaySong.play();
-            
             if (playPromise !== undefined) {
                 playPromise.then(() => {
                     // 播放成功
-                    isPlaying = true;
                     musicControl.innerHTML = '<i>♫</i>';
+                    isPlaying = true;
                 }).catch(error => {
-                    // 播放失败，等待用户交互
-                    console.log('需要用户交互后才能播放音乐');
-                    musicControl.innerHTML = '<i>♪</i>';
-                    
-                    // 添加用户交互监听
-                    document.addEventListener('click', function initAudio() {
-                        birthdaySong.play().then(() => {
-                            isPlaying = true;
-                            musicControl.innerHTML = '<i>♫</i>';
-                        });
-                        // 移除事件监听器，只执行一次
-                        document.removeEventListener('click', initAudio);
-                    }, { once: true });
+                    // 播放失败，静默处理
+                    console.error('音乐自动播放失败:', error);
                 });
             }
         }
